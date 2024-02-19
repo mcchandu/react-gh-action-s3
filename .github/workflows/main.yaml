@@ -1,36 +1,37 @@
-name: Upload Website
+name: CDK Deploy
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches:
+      - master
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install root dependencies
+      run: npm ci --prefix react-gh-action-s3
+      
+    - name: Build app
+      run: npm run build --prefix react-gh-action-s3   
 
-      - name: Build app
-        run: npm run build
+    - name: Generate CDK .env file
+      run: |
+        echo "AWS_REGION=${{ secrets.AWS_REGION }}" > --prefix react-gh-action-s3/cdk/.env
+        echo "S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }}" >> react-gh-action-s3/cdk/.env
+        echo "CUSTOM_DOMAIN=${{ secrets.CUSTOM_DOMAIN }}" >> react-gh-action-s3/cdk/.env
+        echo "HOSTED_ZONE_ID=${{ secrets.HOSTED_ZONE_ID }}" >> react-gh-action-s3/cdk/.env
+        echo "RELATIVE_PATH_TO_BUILD_DIR=../build" >> react-gh-action-s3/cdk/.env
 
-      - name: Upload to S3
-        uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --acl public-read
-        env:
-          SOURCE_DIR: build/
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    - name: CDK Deploy
+      run: npx cdktf deploy test-s3 --prefix --prefix react-gh-action-s3/cdk
+ 
