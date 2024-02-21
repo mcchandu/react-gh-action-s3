@@ -30,6 +30,11 @@ jobs:
     - name: Build app
       run: npm run build 
 
+    - name: Install cdktf
+      run: |
+       cd react-gh-action-s3/cdk
+       npm install @arc-iac/tf-cdk-spa 
+
     - name: Generate CDK .env file
       run: |
         echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> cdk/.env
