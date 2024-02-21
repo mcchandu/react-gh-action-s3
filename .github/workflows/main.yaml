@@ -46,4 +46,4 @@ jobs:
     - name: CDK Deploy
       run: |
        cd cdk
-       npx cdktf deploy test-s3 cdk --auto-approve
+       npx cdktf deploy test-s3 --auto-approve
