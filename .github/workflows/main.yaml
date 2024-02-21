@@ -39,4 +39,4 @@ jobs:
         echo "RELATIVE_PATH_TO_BUILD_DIR=../build" >> cdk/.env
 
     - name: CDK Deploy
-      run: npx cdktf deploy test-s3 --app react-gh-action-s3/cdk --auto-approve
+      run: npx cdktf deploy test-s3 cdk --auto-approve
