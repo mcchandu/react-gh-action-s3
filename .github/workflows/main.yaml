@@ -24,18 +24,18 @@ jobs:
         node-version: 14
 
     - name: Install root dependencies
-      run: npm i 
+      run: npm install
       
     - name: Build app
       run: npm run build 
 
     - name: Generate CDK .env file
       run: |
-        echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> react-gh-action-s3/react-gh-action-s3/cdk/.env
+        echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> cdk/.env
         echo "S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }}" >> cdk/.env
         echo "CUSTOM_DOMAIN=${{ secrets.CUSTOM_DOMAIN }}" >> cdk/.env
         echo "HOSTED_ZONE_ID=${{ secrets.HOSTED_ZONE_ID }}" >> cdk/.env
         echo "RELATIVE_PATH_TO_BUILD_DIR=../build" >> cdk/.env
 
     - name: CDK Deploy
-      run: npx cdktf deploy test-s3 --prefix cdk
+      run: npx cdktf deploy test-s3 --app react-gh-action-s3/cdk --auto-approve
