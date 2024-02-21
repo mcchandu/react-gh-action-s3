@@ -32,7 +32,7 @@ jobs:
 
     - name: Install cdktf
       run: |
-       cd react-gh-action-s3/cdk
+       cd cdk
        npm install @arc-iac/tf-cdk-spa 
 
     - name: Generate CDK .env file
